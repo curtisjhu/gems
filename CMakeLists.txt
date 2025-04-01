@@ -1,17 +1,8 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(gems)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-#-------------------------------------------------------------------------------
-# Build options
-#-------------------------------------------------------------------------------
-option(BUILD_DEBUG     "Build with debug settings"    OFF)
-
-set(BUILD_DEBUG ${BUILD_DEBUG} CACHE BOOL "Build debug" FORCE)
-
-if (BUILD_DEBUG)
-  set(CMAKE_BUILD_TYPE Debug)
-endif()
 
 #-------------------------------------------------------------------------------
 # Set target
@@ -21,8 +12,44 @@ endif()
 # else()
 #   add_library(main SHARED ${APPLICATION_3_1_SOURCE} ${APPLICATION_HEADERS})
 # endif()
-add_executable(${PROJECT_NAME} SOURCES)
-# target_include_directories(${PROJECT_NAME} PUBLIC src)
+
+add_executable(${PROJECT_NAME} source/main.cpp)
+target_include_directories(${PROJECT_NAME} PUBLIC source)
+
+#-------------------------------------------------------------------------------
+# Build options
+#-------------------------------------------------------------------------------
+option(BUILD_DEBUG     "Build with debug settings"    OFF)
+option(BUILD_DOCS      "Build with documentation"     OFF)
+
+set(BUILD_DEBUG ${BUILD_DEBUG} CACHE BOOL "Build debug" FORCE)
+
+if (BUILD_DEBUG)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+if (UNIX)
+    if (APPLE)
+        target_link_libraries(${PROJECT_NAME}
+                "-framework Cocoa"
+                "-framework IOKit"
+                "-framework CoreVideo"
+        )
+    else()
+        target_link_libraries(${PROJECT_NAME}
+                ${CMAKE_THREAD_LIBS_INIT}
+                ${X11_LIBRARIES}
+                ${CMAKE_DL_LIBS}
+        )
+    endif()
+endif()
+
+if (BUILD_DOCS)
+	find_package(DOXYGEN)
+	if(DOXYGEN_FOUND AND BUILD_DOCS)
+		add_subdirectory(docs)
+	endif()
+endif()
 
 #-------------------------------------------------------------------------------
 # Install dependencies
@@ -38,8 +65,8 @@ include(CMakePrintHelpers)
 #-------------------------------------------------------------------------------
 set(OpenGL_GL_PREFERENCE LEGACY)
 find_package(OpenGL REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenGL::GL)
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenGL::GLU)
+target_link_libraries(${PROJECT_NAME} OpenGL::GL)
+target_link_libraries(${PROJECT_NAME} OpenGL::GLU)
 
 # Threads
 find_package(Threads REQUIRED)
@@ -138,6 +165,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_SOURCE_DIR} ${IMGUI_S
 #-------------------------------------------------------------------------------
 
 add_compile_options(-Wall)
+
 add_subdirectory(source/natural/caustics)
+# target_link_libraries(${PROJECT_NAME} caustics)
 
 
