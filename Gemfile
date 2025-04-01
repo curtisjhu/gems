@@ -1,9 +1,6 @@
 source "https://rubygems.org"
-#     bundle exec jekyll serve
 gem "jekyll", "~> 4.3.3"
-gem "minima", "~> 2.5"
-# group :jekyll_plugins do
-# end
+gem "just-the-docs"
 
 # Windows and JRuby does not include zoneinfo files, so bundle the tzinfo-data gem
 # and associated library.

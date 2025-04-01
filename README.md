@@ -6,11 +6,15 @@ For a comprehensive list of Graphics resources, look at [realtimerendering.com](
 
 ## Build the projects
 #### MacOS/Unix
-Using cmake
+Using cmake to build subprojects
+```
+mkdir build && cd build
+cmake ..
+make [subproject executable]
+```
 
 #### Windows
-Use Visual Studio 2022...TBD
-
+Use Visual Studio 2022...TBD. (Just choose subtarget and run it.)
 
 ## Build website
 The Jekyll website is interwoven with the directory structure. Just run
