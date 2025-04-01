@@ -46,13 +46,14 @@ int main(void)
     // Shader
     Shader myShader("shaders/vert.glsl", "shaders/frag.glsl");
     float vertices[] = {
+        // Screen space is x,y \in [-1, 1]
         // positions (tri)   // colors (red, green, blue)
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   // top 
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
+        -1.0f, -1.0f,  1.0f, 0.0f, 0.0f,  // bottom left
+         1.0f,  1.0f,  0.0f, 1.0f, 0.0f,  // bottom right
+        -1.0f,  1.0f,  0.0f, 0.0f, 1.0f,   // top 
+         1.0f,  1.0f, 0.0f, 0.0f, 1.0f,  // top right 
+        -1.0f, -1.0f, 0.0f, 1.0f, 0.0f,   // top 
+         1.0f, -1.0f, 1.0f, 0.0f, 0.0f,  // bottom
     };
 
     // Vertex Buffer Object, Vertex Array Object
@@ -67,10 +68,10 @@ int main(void)
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     // Initialize ImGUI
@@ -121,7 +122,7 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT);
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
