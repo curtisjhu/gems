@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 3.8)
-project(Assignment3)
+project(gems)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #-------------------------------------------------------------------------------
 # Build options
 #-------------------------------------------------------------------------------
 option(BUILD_DEBUG     "Build with debug settings"    OFF)
-option(BUILD_DOCS      "Build documentation"          OFF)
-
 
 set(BUILD_DEBUG ${BUILD_DEBUG} CACHE BOOL "Build debug" FORCE)
 
@@ -18,56 +16,30 @@ endif()
 #-------------------------------------------------------------------------------
 # Set target
 #-------------------------------------------------------------------------------
-set(APPLICATION_3_1_SOURCE
+# if (WIN32 OR APPLE)
+#   add_library(main STATIC ${APPLICATION_3_1_SOURCE} ${APPLICATION_HEADERS})
+# else()
+#   add_library(main SHARED ${APPLICATION_3_1_SOURCE} ${APPLICATION_HEADERS})
+# endif()
+add_executable(${PROJECT_NAME} SOURCES)
+# target_include_directories(${PROJECT_NAME} PUBLIC src)
 
-    # Scene Object & Structure
-    src/scene/sphere.cpp
-    src/scene/triangle.cpp
-    src/scene/light.cpp
-    src/scene/bvh.cpp
-    src/scene/bbox.cpp
-
-    # Pathtracer
-    src/pathtracer/camera.cpp
-    src/pathtracer/bsdf.cpp
-    src/pathtracer/pathtracer.cpp
-
-    # Imgui
-    src/imgui/imgui.cpp
-    src/imgui/imgui_widgets.cpp
-    src/imgui/imgui_draw.cpp
-    src/imgui/imgui_tables.cpp
-    src/imgui/backends/imgui_impl_glfw.cpp
-    src/imgui/backends/imgui_impl_opengl2.cpp
-)
-
-if (WIN32)
-    list(APPEND APPLICATION_3_1_SOURCE src/util/win32/getopt.c)
-endif()
-
-if (WIN32 OR APPLE)
-  add_library(pt31 STATIC ${APPLICATION_3_1_SOURCE} ${APPLICATION_HEADERS})
-else()
-  add_library(pt31 SHARED ${APPLICATION_3_1_SOURCE} ${APPLICATION_HEADERS})
-endif()
-
-target_include_directories(pt31 PUBLIC src)
-
-add_executable(pathtracer ${APPLICATION_3_2_SOURCE} ${APPLICATION_HEADERS})
-target_include_directories(pathtracer PUBLIC src)
-
-target_link_libraries(pt31 PUBLIC CGL)
-target_link_libraries(pathtracer PUBLIC pt31)
-
-set(CGL_INCLUDE_DIRS CGL/include CGL/deps/glew/include CGL/deps/glfw/include ./src/imgui ./src/imgui/backends)
+#-------------------------------------------------------------------------------
+# Install dependencies
+#-------------------------------------------------------------------------------
+include(cmake/CPM.cmake)
+include(cmake/IMGUI.cmake)
+include(cmake/GLFW.cmake)
+include(cmake/GLM.cmake)
+include(CMakePrintHelpers)
 
 #-------------------------------------------------------------------------------
 # Find dependencies
 #-------------------------------------------------------------------------------
 set(OpenGL_GL_PREFERENCE LEGACY)
 find_package(OpenGL REQUIRED)
-target_link_libraries(pt31 PUBLIC OpenGL::GL)
-target_link_libraries(pt31 PUBLIC OpenGL::GLU)
+target_link_libraries(${PROJECT_NAME} PUBLIC OpenGL::GL)
+target_link_libraries(${PROJECT_NAME} PUBLIC OpenGL::GLU)
 
 # Threads
 find_package(Threads REQUIRED)
@@ -76,33 +48,96 @@ find_package(Threads REQUIRED)
 set(OpenGL_GL_PREFERENCE LEGACY)
 find_package(OpenGL REQUIRED)
 
-# Freetype
-find_package(Freetype REQUIRED)
-target_include_directories(CGL PRIVATE ${FREETYPE_INCLUDE_DIRS})
-target_link_libraries(CGL PRIVATE ${FREETYPE_LIBRARIES})
-
-# GLEW
-add_definitions(-DGLEW_STATIC)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/libs/glew")
-target_include_directories(CGL PUBLIC ${GLEW_INCLUDE_DIRS})
-target_link_libraries(CGL PUBLIC ${GLEW_LIBRARIES})
-
 # GLFW
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw")
-target_link_libraries(CGL PUBLIC glfw)
-target_link_libraries(CGL PUBLIC OpenGL::GL)
+find_package(GLFW REQUIRED)
+cmake_print_variables(GLFW_FOUND)
+target_link_libraries(${PROJECT_NAME} glfw)
+
+# OpenGL
+find_package(OpenGL REQUIRED)
+cmake_print_variables(OPENGL_FOUND)
+target_link_libraries(${PROJECT_NAME} OpenGL::GL ${OPEN_GL_LIBRARIES})
+
+# GLM
+target_link_libraries(${PROJECT_NAME} glm::glm)
+
+# IMGUI (Manual linking)
+set(PUBLIC_H_FILES
+  ${IMGUI_SOURCE_DIR}/imgui.h
+  ${IMGUI_SOURCE_DIR}/imconfig.h
+  ${IMGUI_SOURCE_DIR}/imgui_internal.h
+  ${IMGUI_SOURCE_DIR}/imstb_rectpack.h
+  ${IMGUI_SOURCE_DIR}/imstb_textedit.h
+  ${IMGUI_SOURCE_DIR}/imstb_truetype.h
+
+# ADD all backends. Let linker handle which implementation you end up using.
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx9.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx10.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx11.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx12.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_metal.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl2.h
+  ${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl3.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_wgpu.h
+
+# ADD all platforms. Let linker handle which implementation you end up using.
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_allegro5.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_android.h
+  ${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_glut.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_osx.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer2.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.h
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_win32.h
+)
+
+set(PUBLIC_CXX_FILES
+  ${IMGUI_SOURCE_DIR}/imgui.cpp
+  ${IMGUI_SOURCE_DIR}/imgui_draw.cpp
+  ${IMGUI_SOURCE_DIR}/imgui_widgets.cpp
+  ${IMGUI_SOURCE_DIR}/imgui_demo.cpp
+  ${IMGUI_SOURCE_DIR}/imgui_tables.cpp
+  
+# ADD all backends. Let linker handle which implementation you end up using.
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx9.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx10.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx11.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx12.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_metal.mm
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl2.cpp
+  ${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_wgpu.cpp
+
+# ADD all platforms. Let linker handle which implementation you end up using.
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_allegro5.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_android.cpp
+  ${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_glut.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_osx.mm
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer2.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
+#   ${IMGUI_SOURCE_DIR}/backends/imgui_impl_win32.cpp
+)
+
+add_library(imgui STATIC ${PUBLIC_CXX_FILES})
+
+target_include_directories(imgui PRIVATE ${IMGUI_SOURCE_DIR} ${IMGUI_SOURCE_DIR}/backends)
+target_link_libraries(imgui glfw)
+
+target_link_libraries(${PROJECT_NAME} imgui)
+target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_SOURCE_DIR} ${IMGUI_SOURCE_DIR}/backends)
 
 #-------------------------------------------------------------------------------
 # Add subdirectories
 #-------------------------------------------------------------------------------
 
-# build documentation
-if(BUILD_DOCS)
-  find_package(DOXYGEN)
-  if(DOXYGEN_FOUND AND BUILD_DOCS)
-    add_subdirectory(docs)
-  endif()
-endif()
+add_compile_options(-Wall)
+add_subdirectory(source/natural/caustics)
 
-# Install settings
-set(CMAKE_INSTALL_PREFIX "${Assignment1_SOURCE_DIR}/")
+
