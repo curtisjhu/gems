@@ -167,6 +167,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_SOURCE_DIR} ${IMGUI_S
 add_compile_options(-Wall)
 
 add_subdirectory(source/natural/caustics)
-# target_link_libraries(${PROJECT_NAME} caustics)
+add_subdirectory(source/animation/minion)
+add_subdirectory(source/animation/jimmy-neutron)
 
 
