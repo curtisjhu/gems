@@ -13,6 +13,14 @@
 void ScreenShot() {
 }
 
+struct Settings {
+    float k;
+    float phi;
+    float theta;
+};
+
+Settings settings = {1, 0, 0};
+
 
 int main(void)
 {
@@ -26,7 +34,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(640, 480, "Jimbo", NULL, NULL);
+    window = glfwCreateWindow(480, 640, "Jimbo", NULL, NULL);
 
     if (!window)
     {
@@ -105,8 +113,14 @@ int main(void)
 
         // ImGUI window creation
         ImGui::Begin("Settings");
+        ImGui::SetWindowPos(ImVec2({ 0, 0 }));
+        ImGui::DragFloat("k", &settings.k, 0.01, 0.01, 3);
+        ImGui::DragFloat("theta", &settings.theta, 0.01);
+        ImGui::DragFloat("phi", &settings.phi, 0.01);
+        if (ImGui::Button("Reset")) {
+            settings.k = 1.0, settings.theta = 0, settings.phi = 0;
+        }
         ImGui::End();
-        ImGui::CloseCurrentPopup();
         
 
         // Uniforms
@@ -122,8 +136,10 @@ int main(void)
         #endif
         glVertex2f(w_f, h_f);
         myShader.setVec2("u_resolution", w_f, h_f);
+        myShader.setFloat("k", settings.k);
+        myShader.setFloat("phi", settings.phi);
+        myShader.setFloat("theta", settings.theta);
         myShader.use();
-
 
 
         ImVec2 deltaMouse = ImGui::GetMouseDragDelta();

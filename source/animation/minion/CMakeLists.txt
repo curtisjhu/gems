@@ -10,13 +10,13 @@ target_include_directories(${EXEC} PRIVATE ${CMAKE_HOME_DIRECTORY}/include)
 
 # COPYING SHADERS
 add_custom_target(
-	copy_shaders
+	minion_copy_shaders
 	COMMAND ${CMAKE_COMMAND} -E copy_directory              
 		${CMAKE_CURRENT_SOURCE_DIR}/shaders 
 		${CMAKE_CURRENT_BINARY_DIR}/shaders
 	COMMENT "Copying shaders" VERBATIM
 )
-add_dependencies(${EXEC} copy_shaders)
+add_dependencies(${EXEC} minion_copy_shaders)
 
 # LIBRARIES
 target_link_libraries(${EXEC} glfw)
