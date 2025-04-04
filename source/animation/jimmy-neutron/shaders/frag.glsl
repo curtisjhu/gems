@@ -51,7 +51,7 @@ float sdRoundCone( vec3 p, float r1, float r2, float h )
   float k = dot(q,vec2(-b,a));
   if( k<0.0 ) return length(q) - r1;
   if( k>a*h ) return length(q-vec2(0.0,h)) - r2;
-  return dot(q, vec2(a,b) ) - r1;
+  return dot( q, vec2(a,b) ) - r1;
 }
 
 
