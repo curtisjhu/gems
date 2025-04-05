@@ -80,7 +80,7 @@ float intersect(in vec3 p) {
     float d = sdRoundCone(p, 0.2, 0.3, 0.3);
 
     // bottom face
-    d = min(d, sdEllipsoid(p - vec3(0, 0.3, 0), vec3(0.3, 0.2, 0.2)));
+    d = min(d, sdEllipsoid(p - vec3(0, -0.2, 0.04), vec3(0.22, 0.18, 0.22)));
 
     return d;
 }
@@ -106,7 +106,8 @@ vec4 ray_march(in vec3 ro, in vec3 rd, in vec2 uv)
         if (d < MINIMUM_HIT_DISTANCE) {
             float eps = 0.001;
             vec4 res = vec4(0.95, 0.87, 0.29, 1.0);
-            res.rgb *= clamp((intersect(p+eps*LIGHT)-d)/eps,0.0,1.0);
+            // res.rgb *= clamp((intersect(p+eps*LIGHT)-d)/eps,0.0,1.0);
+            res.rgb *= clamp(dot(normal(p), LIGHT-p), 0, 1);
             return res;
         }
         if (t > MAXIMUM_TRACE_DISTANCE)
