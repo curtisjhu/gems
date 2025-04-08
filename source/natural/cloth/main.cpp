@@ -12,6 +12,7 @@
 class Settings
 {
 public:
+    Settings(){};
     float intensity;
 };
 

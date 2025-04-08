@@ -29,7 +29,7 @@ We assume that each pixel on the floor only back traces up
 (that is the only light contribution is the ray going straight down.
 Light doesn't travel well in water anyways so this is a rough estimation).
 Then it refracts through a water surface described by a fourier series.
-Then it samples a texture of the sun or light source.
+Then it samples a light source.
 
 
 
