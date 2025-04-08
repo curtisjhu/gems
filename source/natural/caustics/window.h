@@ -6,21 +6,18 @@
 class Window
 {
 public:
-	Window(GLFWwindow* win) : window(win) {
-		unsigned int VAO = 0, VBO = 0;
-		unsigned int width = 640;
-		unsigned int height = 480;
-		const char* title = "Template";
-	};
-	Window(GLFWwindow* win,
-		const char* title,
-		unsigned int width,
-		unsigned int height) :
-	window(win), title(title), width(width), height(height) {
-		unsigned int VAO = 0, VBO = 0;
-	};
+	Window() :
+		title("Template"),
+		width(640), height(480),
+		VAO(0), VBO(0)
+		{};
 
-	~Window() {};
+	Window(const char* title,
+		int width,
+		int height) :
+			title(title),
+			width(width), height(height),
+			VAO((unsigned int) 0), VBO((unsigned int) 0) {};
 
 	GLFWwindow* window;
     float vertices[30] = {
@@ -34,8 +31,8 @@ public:
          1.0f, -1.0f, 1.0f, 0.0f, 0.0f,  // bottom
     };
 	unsigned int VAO, VBO;
-	unsigned int width;
-	unsigned int height;
+	int width;
+	int height;
 	const char* title;
 
 	void init();

@@ -1,12 +1,12 @@
 #include "window.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-include <stdexcept>
+#include <stdexcept>
 
-Window::init() {
+void Window::init() {
 
     if (!glfwInit())
-        return -1;
+		throw std::runtime_error("Failed to create GLFW window");
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -27,7 +27,8 @@ Window::init() {
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if (err != GLEW_OK) {
-        throw std::runtime_error("Error: %s\n", glewGetErrorString(err));
+		printf("Error: %s\n", glewGetErrorString(err));
+        throw std::runtime_error("Terminating...");
     }
     if (!GLEW_VERSION_2_1) {
 		throw std::runtime_error("OpenGL 2.1 not supported");
@@ -38,7 +39,7 @@ bool Window::stillOpen() {
 	return !glfwWindowShouldClose(window);
 }
 
-Window::buffer() {
+void Window::buffer() {
     // Vertex Buffer Object, Vertex Array Object
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -57,7 +58,7 @@ Window::buffer() {
     glEnableVertexAttribArray(1);
 }
 
-Window::render() {
+void Window::render() {
     // io devices
     glfwPollEvents();
 
@@ -75,7 +76,7 @@ Window::render() {
 	glfwSwapBuffers(window);
 }
 
-Window::destroy() {
+void Window::destroy() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glfwDestroyWindow(window);

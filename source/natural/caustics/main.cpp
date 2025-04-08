@@ -1,6 +1,4 @@
 #include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
 
 #include "shader.h"
 #include "window.h"
@@ -14,17 +12,17 @@
 class Settings
 {
 public:
-    Settings() {}
+    Settings(){};
     float intensity;
 };
 
 int main(void)
 {
 
-    GLFWwindow* w;
-	Window window(w, "Water caustics", 640, 480);
+	Window window("Water caustics", 640, 480);
     window.init();
     window.buffer();
+    Gui::init(window.window);
 
     Shader myShader("shaders/vert.glsl", "shaders/frag.glsl");
     

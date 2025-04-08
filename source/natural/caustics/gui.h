@@ -1,16 +1,16 @@
 #pragma once
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <stdexcept>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 class Gui
 {
 public:
-	Gui() {};
-	~Gui() {};
 	// Not used as an instance
-	void static init(GLFWwindow& window);
-	void static newFrame();
-	void static render();
-	void static destroy();
+	static void init(GLFWwindow *window);
+	static void newFrame();
+	static void render();
+	static void destroy();
 };

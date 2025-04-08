@@ -1,9 +1,12 @@
 #include "gui.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <stdexcept>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+#include <iostream>
 
-Gui::init(GLFWwindow &window) {
+void Gui::init(GLFWwindow *window) {
 	// Initialize ImGUI
 	/* Check OpenGL version */
 	const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
