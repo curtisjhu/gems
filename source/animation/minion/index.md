@@ -1,6 +1,5 @@
 ---
 layout: post
-title: Movie Animation Minions
 ---
 
 # Rendering a Minion from Scratch

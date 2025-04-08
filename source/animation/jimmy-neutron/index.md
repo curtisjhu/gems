@@ -1,9 +1,8 @@
 ---
 layout: post
-title: Movie Animation Minions
 ---
 
-# Rendering a Minion from Scratch
+# Rendering Jimmy Neutron
 > Based on the following [video from Inigo Quilez](https://youtu.be/8--5LwHRhjk). 
 
 Normally in industry, you'd create a triangular mesh of the minion, which material properties or textures over the mesh. In our minion, we'll do this slightly different. We'll rely only on Ray Casting using only the shader.
