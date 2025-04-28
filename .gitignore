@@ -5,6 +5,7 @@ _site
 vendor
 Gemfile.lock
 
+out
 build
 .vscode
 .vs
